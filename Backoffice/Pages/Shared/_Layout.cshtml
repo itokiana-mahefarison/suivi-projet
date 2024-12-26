@@ -7,45 +7,80 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Backoffice.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Backoffice</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+    <div class="layout-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a asp-area="" asp-page="/Index">
+                    <span class="brand-logo">Project Manager</span>
+                </a>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="@(ViewContext.RouteData.Values["Page"]?.ToString() == "/Dashboard/Index" ? "active" : "")">
+                        <a asp-page="/Dashboard/Index">
+                            <i class="fas fa-home"></i> <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["Page"]?.ToString() == "/Projects/Index" ? "active" : "")">
+                        <a asp-page="/Projects/Index">
+                            <i class="fas fa-project-diagram"></i> <span>Projects</span>
+                        </a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["Page"]?.ToString() == "/Users/Index" ? "active" : "")">
+                        <a asp-page="/Users/Index">
+                            <i class="fas fa-users"></i> <span>Users</span>
+                        </a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["Page"]?.ToString() == "/Privacy" ? "active" : "")">
+                        <a asp-page="/Privacy">
+                            <i class="fas fa-shield-alt"></i> <span>Privacy</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - Backoffice - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        <div class="main-content">
+            <header class="top-header">
+                <div class="header-right">
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="user-profile dropdown">
+                        <button class="dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                            <span>John Doe</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <main class="content-area">
+                @RenderBody()
+            </main>
         </div>
-    </footer>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+    
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.layout-container').classList.toggle('sidebar-collapsed');
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,111 @@
+﻿@page
+@model Backoffice.Pages.Dashboard.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="dashboard">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stats-card">
+            <div class="stats-icon projects">
+                <i class="fas fa-folder"></i>
+            </div>
+            <div class="stats-info">
+                <h3>Active Projects</h3>
+                <p class="stats-number">@Model.ActiveProjects</p>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-icon users">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stats-info">
+                <h3>Users</h3>
+                <p class="stats-number">@Model.TotalUsers</p>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-icon tasks">
+                <i class="fas fa-tasks"></i>
+            </div>
+            <div class="stats-info">
+                <h3>Tasks</h3>
+                <p class="stats-number">@Model.TotalTasks</p>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-icon hours">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stats-info">
+                <h3>Total Hours</h3>
+                <p class="stats-number">@Model.TotalHours</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Recent Projects -->
+        <div class="dashboard-card">
+            <h2>Recent Projects</h2>
+            <div class="projects-list">
+                <div class="project-item">
+                    <div class="project-info">
+                        <h4>Website Redesign</h4>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <span class="status active">active</span>
+                </div>
+
+                <div class="project-item">
+                    <div class="project-info">
+                        <h4>Mobile App</h4>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 25%"></div>
+                        </div>
+                    </div>
+                    <span class="status active">active</span>
+                </div>
+
+                <div class="project-item">
+                    <div class="project-info">
+                        <h4>Cloud Migration</h4>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <span class="status completed">completed</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Statistics au lieu de Recent Activity -->
+        <div class="dashboard-card">
+            <h2>Project Statistics</h2>
+            <div class="stats-list">
+                <div class="stat-item">
+                    <div class="stat-label">Completed Projects</div>
+                    <div class="stat-value">8</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">In Progress</div>
+                    <div class="stat-value">4</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Team Members</div>
+                    <div class="stat-value">12</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Average Project Duration</div>
+                    <div class="stat-value">45 days</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

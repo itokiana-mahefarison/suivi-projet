@@ -1,0 +1,93 @@
+﻿@page
+@model Backoffice.Pages.Auth.RegisterModel
+@{
+}
+
+<div class="register-container">
+    <div class="register-box">
+        <div class="row">
+            <!-- Colonne de gauche avec fond bleu -->
+            <div class="col-md-5 brand-section">
+                <div class="brand-content">
+                    <h1>Project Manager</h1>
+                    <p>Manage your projects efficiently</p>
+                </div>
+            </div>
+
+            <!-- Colonne de droite avec le formulaire -->
+            <div class="col-md-7 form-section">
+                <div class="form-content">
+                    <h2>Create an Account</h2>
+                    <p class="subtitle">Create an account and start managing your projects.</p>
+                    
+                    <form method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name" asp-for="Name" placeholder="John Doe">
+                                    <label for="name">First name</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="email" asp-for="Email" required placeholder="name@example.com">
+                                    <label for="email">Email Address*</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="tel" class="form-control" id="phone" asp-for="Phone" placeholder="Phone">
+                                    <label for="phone">Phone Number</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="country" asp-for="Country" placeholder="Country">
+                                    <label for="country">Country</label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" id="password" asp-for="Password" required placeholder="Password">
+                                    <label for="password">Password*</label>
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                            {
+                                <div class="col-12">
+                                    <div class="error-message">
+                                        @Model.ErrorMessage
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terms" required>
+                                    <label class="form-check-label" for="terms">
+                                        I agree to the terms and conditions
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="login-link">
+                                    <p>Already have an account? <a href="/Auth/Login">Sign In</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
