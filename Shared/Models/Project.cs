@@ -12,6 +12,7 @@ namespace Shared.Models
         public string? Description { get; set; }
         public Double? Budget { get; set; }
         public Client? Client { get; set; }
+        public int? ClientId { get; set; }
         public ICollection<Task>? Tasks { get; set; }
 
     }

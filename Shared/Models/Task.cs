@@ -20,7 +20,9 @@ namespace Shared.Models
         /// Durée estimée de la tache exprimée en heures (h)
         /// </summary>
         public Double? EstimatedDuration { get; set; }
+        public int? UserId { get; set; }
         public User? User { get; set; }
+        public int ProjectId { get; set; }
         public required Project Project { get; set; }
     }
 }

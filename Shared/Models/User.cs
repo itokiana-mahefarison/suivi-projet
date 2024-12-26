@@ -15,6 +15,7 @@ namespace Shared.Models
         public string? Country {  get; set; }
         public string? Phone { get; set; }
         public string? City { get; set; }
+        public int? RoleId { get; set; }
         public Role? Role { get; set; }
         public ICollection<Task>? Tasks { get; set; }
     }

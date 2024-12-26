@@ -110,6 +110,36 @@ namespace Backoffice.Config.Database
             modelBuilder.Entity<Role>()
                 .Property(r => r.Label)
                 .IsRequired();
+
+            // Seed Roles
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = 1, Label = "Administrator" },
+                new Role { Id = 2, Label = "Developer" },
+                new Role { Id = 3, Label = "Project Manager" }
+            );
+
+            // Seed Admin User
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    Name = "Admin",
+                    Email = "admin@example.com",
+                    Password = "Admin123!", // À remplacer par un mot de passe hashé en production
+                    Role = new Role { Id = 1, Label = "Administrator" }
+                }
+            );
+
+            // Seed Sample Project
+            modelBuilder.Entity<Project>().HasData(
+                new Project
+                {
+                    Id = 1,
+                    Title = "Sample Project",
+                    Description = "This is a sample project",
+                    CreatedAt = DateTime.UtcNow
+                }
+            );
         }
 
         protected void BeforeSaveChanges()
