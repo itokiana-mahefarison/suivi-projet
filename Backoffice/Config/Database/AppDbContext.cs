@@ -19,126 +19,96 @@ namespace Backoffice.Config.Database
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>()
-                .Property(u => u.Name)
-                .IsRequired(false);
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.Property(u => u.Name).IsRequired();
+                entity.Property(u => u.Email).IsRequired();
+                entity.Property(u => u.Password).IsRequired();
+                entity
+                    .HasOne(u => u.Role)
+                    .WithMany(r => r.Users)
+                    .HasForeignKey(u => u.RoleId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
+            });
 
-            modelBuilder.Entity<User>()
-                .Property(u => u.Email)
-                .IsRequired();
+            modelBuilder.Entity<Shared.Models.Task>(entity =>
+            {
+                entity.Property(u => u.Title).IsRequired();
+                entity.Property(u => u.Description).IsRequired(false);
+                entity.Property(u => u.StartDate).IsRequired(false);
+                entity.Property(u => u.EndDate).IsRequired(false);
+                entity.Property(u => u.RealDuration).IsRequired(false);
+                entity.Property(u => u.EstimatedDuration).IsRequired(false);
 
-            modelBuilder.Entity<User>()
-                .Property(u => u.Password)
-                .IsRequired();
+                entity.HasOne(u => u.User)
+                    .WithMany(r => r.Tasks)
+                    .HasForeignKey(u => u.UserId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
 
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Role)
-                .WithMany(r => r.Users)
-                .IsRequired(false);
+                entity.HasOne(u => u.Project)
+                    .WithMany(p => p.Tasks)
+                    .HasForeignKey(u => u.ProjectId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
+            });
 
-            modelBuilder.Entity<Shared.Models.Task>()
-                .Property(t => t.Title)
-                .IsRequired();
+            modelBuilder.Entity<Project>(entity =>
+            {
+                entity.Property(u => u.Title).IsRequired();
+                entity.Property(u => u.Description).IsRequired(false);
+                entity.Property(u => u.Budget).IsRequired(false);
 
-            modelBuilder.Entity<Shared.Models.Task>()
-                .Property(t => t.Description)
-                .IsRequired(false);
+                entity.HasOne(u => u.Client)
+                    .WithMany(r => r.Projects)
+                    .HasForeignKey(u => u.ClientId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
+            });
 
-            modelBuilder.Entity<Shared.Models.Task>()
-                .Property(t => t.StartDate)
-                .IsRequired(false);
+            modelBuilder.Entity<Client>(entity =>
+            {
+                entity.Property(u => u.Name).IsRequired();
+                entity.Property(u => u.Address).IsRequired(false);
+                entity.Property(u => u.City).IsRequired(false);
+                entity.Property(u => u.Country).IsRequired(false);
+                entity.Property(u => u.Phone).IsRequired(false);
+            });
 
-            modelBuilder.Entity<Shared.Models.Task>()
-                .Property(t => t.EndDate)
-                .IsRequired(false);
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.Property(u => u.Label).IsRequired();
+            });
 
-            modelBuilder.Entity<Shared.Models.Task>()
-                .Property(t => t.RealDuration)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Shared.Models.Task>()
-                .Property(t => t.EstimatedDuration)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Shared.Models.Task>()
-                .HasOne(t => t.User)
-                .WithMany(r => r.Tasks)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Shared.Models.Task>()
-                .HasOne(t => t.Project)
-                .WithMany(p => p.Tasks)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Project>()
-                .Property(p => p.Title)
-                .IsRequired();
-
-            modelBuilder.Entity<Project>()
-                .Property(p => p.Description)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Project>()
-                .Property(p => p.Budget)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Project>()
-                .HasOne(p => p.Client)
-                .WithMany(c => c.Projects)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Client>()
-                .Property(c => c.Name)
-                .IsRequired();
-
-            modelBuilder.Entity<Client>()
-                .Property(c => c.Address)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Client>()
-                .Property(c => c.City)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Client>()
-                .Property(c => c.Country)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Client>()
-                .Property(c => c.Phone)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Role>()
-                .Property(r => r.Label)
-                .IsRequired();
-
-            // Seed Roles
+           // Seed Roles
             modelBuilder.Entity<Role>().HasData(
-                new Role { Id = 1, Label = "Administrator" },
-                new Role { Id = 2, Label = "Developer" },
-                new Role { Id = 3, Label = "Project Manager" }
+               new Role { Id = 1, Label = "Administrator" },
+               new Role { Id = 2, Label = "Developer" },
+               new Role { Id = 3, Label = "Project Manager" }
             );
 
             // Seed Admin User
             modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Id = 1,
-                    Name = "Admin",
-                    Email = "admin@example.com",
-                    Password = "Admin123!", // À remplacer par un mot de passe hashé en production
-                    Role = new Role { Id = 1, Label = "Administrator" }
-                }
+               new User
+               {
+                   Id = 1,
+                   Name = "Admin",
+                   Email = "admin@example.com",
+                   Password = "Admin123!", // À remplacer par un mot de passe hashé en production
+                   RoleId = 1
+               }
             );
 
             // Seed Sample Project
             modelBuilder.Entity<Project>().HasData(
-                new Project
-                {
-                    Id = 1,
-                    Title = "Sample Project",
-                    Description = "This is a sample project",
-                    CreatedAt = DateTime.UtcNow
-                }
+               new Project
+               {
+                   Id = 1,
+                   Title = "Sample Project",
+                   Description = "This is a sample project",
+                   CreatedAt = DateTime.UtcNow
+               }
             );
         }
 
