@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Shared.Models
 {
-    public class Task: BaseEntity
+    public class Tasks: BaseEntity
     {
         public required string Title { get; set; }
         public string? Description { get; set; }
@@ -20,9 +19,13 @@ namespace Shared.Models
         /// Durée estimée de la tache exprimée en heures (h)
         /// </summary>
         public Double? EstimatedDuration { get; set; }
+        public string Status { get; set; } = "todo";
         public int? UserId { get; set; }
         public User? User { get; set; }
         public int ProjectId { get; set; }
-        public required Project Project { get; set; }
+        public Project? Project { get; set; }
+        public int? ParentTaskId { get; set; }
+        public Tasks? ParentTask { get; set; }
+        public ICollection<Tasks>? SubTasks { get; set;}
     }
 }

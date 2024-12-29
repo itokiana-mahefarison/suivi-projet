@@ -12,9 +12,14 @@ namespace Backoffice.Pages
             _logger = logger;
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
-
+            if (User.Identity?.IsAuthenticated ?? false)
+            {
+                return RedirectToPage("/Dashboard/Index");
+            }
+            
+            return RedirectToPage("/Auth/Login");
         }
     }
 }

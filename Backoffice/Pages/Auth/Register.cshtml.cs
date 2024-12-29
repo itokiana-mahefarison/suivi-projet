@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Backoffice.Config.Database;
 using Shared.Models;
 using System.ComponentModel.DataAnnotations;
+using Backoffice.Services.Interfaces;
 
 namespace Backoffice.Pages.Auth
 {
     public class RegisterModel : PageModel
     {
         private readonly AppDbContext _context;
+        private readonly IAuthService _authService;
 
         [BindProperty]
         [Display(Name = "First name")]
@@ -50,9 +52,10 @@ namespace Backoffice.Pages.Auth
 
         public string? ErrorMessage { get; set; }
 
-        public RegisterModel(AppDbContext context)
+        public RegisterModel(AppDbContext context, IAuthService authService)
         {
             _context = context;
+            _authService = authService;
         }
 
         public void OnGet()
@@ -75,18 +78,11 @@ namespace Backoffice.Pages.Auth
                 return Page();
             }
 
-            // Vérifier si l'email existe déjà
-            if (_context.Users.Any(u => u.Email == Email))
-            {
-                ErrorMessage = "This email is already registered";
-                return Page();
-            }
-
             var user = new User
             {
                 Name = Name,
                 Email = Email,
-                Password = Password, // Note: Il faudrait hasher le mot de passe dans une vraie application
+                Password = Password,
                 Address = Address,
                 Country = Country,
                 Phone = Phone,
@@ -96,12 +92,14 @@ namespace Backoffice.Pages.Auth
 
             try
             {
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
+                if (await _authService.RegisterUserAsync(user))
+                {
+                    await _authService.SignInAsync(user, HttpContext);
+                    return RedirectToPage("/Index");
+                }
 
-                // Redirection vers la page de connexion avec un message de succès
-                TempData["SuccessMessage"] = "Account created successfully. Please log in.";
-                return RedirectToPage("/Auth/Login");
+                ErrorMessage = "This email is already registered";
+                return Page();
             }
             catch (Exception ex)
             {

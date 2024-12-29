@@ -3,37 +3,61 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Shared.Models;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+using Backoffice.Config.Database;
 
 namespace Backoffice.Pages.Projects
 {
     public class IndexModel : PageModel
     {
+        private readonly AppDbContext _context;
+
+        public IndexModel(AppDbContext context)
+        {
+            _context = context;
+        }
+
         [BindProperty]
         public ProjectInputModel NewProject { get; set; }
         public List<SelectListItem> Clients { get; set; }
         public List<Project> Projects { get; set; }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            // TODO: Récupérer la liste des clients depuis la BDD
-            Clients = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "1", Text = "Client 1" },
-                new SelectListItem { Value = "2", Text = "Client 2" }
-            };
+            // Récupération des clients et conversion en SelectListItem
+            Clients = await _context.Clients
+                .Select(c => new SelectListItem 
+                { 
+                    Value = c.Id.ToString(), 
+                    Text = c.Name 
+                })
+                .ToListAsync();
 
-            // TODO: Récupérer la liste des projets depuis la BDD
-            Projects = new List<Project>();
+            // Récupération des projets avec leurs clients
+            Projects = await _context.Projects
+                .Include(p => p.Client)
+                .ToListAsync();
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
+                await OnGetAsync(); // Recharger les listes en cas d'erreur
                 return Page();
             }
 
-            // TODO: Sauvegarder le projet dans la BDD
+            Project project = new Project
+            {
+                Title = NewProject.Name,
+                Description = NewProject.Description,
+                Budget = NewProject.Budget,
+                ClientId = int.Parse(NewProject.ClientId)
+            };
+
+            _context.Projects.Add(project);
+            await _context.SaveChangesAsync();
+
             return RedirectToPage();
         }
     }
@@ -45,7 +69,7 @@ namespace Backoffice.Pages.Projects
         
         public string Description { get; set; }
         
-        public decimal? Budget { get; set; }
+        public Double? Budget { get; set; }
         
         [Required(ErrorMessage = "Client is required")]
         public string ClientId { get; set; }

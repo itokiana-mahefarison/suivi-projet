@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backoffice.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241226120826_AddForeignKeyProperty")]
-    partial class AddForeignKeyProperty
+    [Migration("20241227105718_AddStatusToTasks")]
+    partial class AddStatusToTasks
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -126,7 +126,7 @@ namespace Backoffice.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("Shared.Models.Task", b =>
+            modelBuilder.Entity("Shared.Models.Tasks", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -149,6 +149,9 @@ namespace Backoffice.Migrations
                     b.Property<double?>("EstimatedDuration")
                         .HasColumnType("float");
 
+                    b.Property<int?>("ParentTaskId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
@@ -157,6 +160,10 @@ namespace Backoffice.Migrations
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -169,6 +176,8 @@ namespace Backoffice.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ParentTaskId");
 
                     b.HasIndex("ProjectId");
 
@@ -238,8 +247,13 @@ namespace Backoffice.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("Shared.Models.Task", b =>
+            modelBuilder.Entity("Shared.Models.Tasks", b =>
                 {
+                    b.HasOne("Shared.Models.Tasks", "ParentTask")
+                        .WithMany("SubTasks")
+                        .HasForeignKey("ParentTaskId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Shared.Models.Project", "Project")
                         .WithMany("Tasks")
                         .HasForeignKey("ProjectId")
@@ -249,6 +263,8 @@ namespace Backoffice.Migrations
                         .WithMany("Tasks")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ParentTask");
 
                     b.Navigation("Project");
 
@@ -278,6 +294,11 @@ namespace Backoffice.Migrations
             modelBuilder.Entity("Shared.Models.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Shared.Models.Tasks", b =>
+                {
+                    b.Navigation("SubTasks");
                 });
 
             modelBuilder.Entity("Shared.Models.User", b =>

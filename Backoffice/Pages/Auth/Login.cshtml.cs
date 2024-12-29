@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Backoffice.Config.Database;
 using Microsoft.EntityFrameworkCore;
+using Backoffice.Services.Interfaces;
 
 namespace Backoffice.Pages.Auth
 {
     public class LoginModel : PageModel
     {
+        private readonly IAuthService _authService;
         private readonly AppDbContext _context;
         
         [BindProperty]
@@ -17,8 +19,9 @@ namespace Backoffice.Pages.Auth
         
         public string ErrorMessage { get; set; }
 
-        public LoginModel(AppDbContext context)
+        public LoginModel(IAuthService authService, AppDbContext context)
         {
+            _authService = authService;
             _context = context;
         }
 
@@ -34,15 +37,17 @@ namespace Backoffice.Pages.Auth
             }
 
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == Email && u.Password == Password);
+                .FirstOrDefaultAsync(u => u.Email == Email);
 
-            if (user == null)
+            var validatedCredetials = await _authService.ValidateLoginAsync(Email, Password);
+
+            if (user == null || !validatedCredetials)
             {
                 ErrorMessage = "Invalid email or password";
                 return Page();
             }
 
-            // TODO: Implement proper authentication
+            await _authService.SignInAsync(user, HttpContext);
             return RedirectToPage("/Index");
         }
     }

@@ -2,13 +2,14 @@
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Shared.Models;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using BCrypt.Net;
 
 namespace Backoffice.Config.Database
 {
     public class AppDbContext: DbContext
     {
         public DbSet<User> Users { get; set; }
-        public DbSet<Shared.Models.Task> Tasks { get; set; }
+        public DbSet<Tasks> Tasks { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -32,7 +33,7 @@ namespace Backoffice.Config.Database
                     .IsRequired(false);
             });
 
-            modelBuilder.Entity<Shared.Models.Task>(entity =>
+            modelBuilder.Entity<Tasks>(entity =>
             {
                 entity.Property(u => u.Title).IsRequired();
                 entity.Property(u => u.Description).IsRequired(false);
@@ -40,6 +41,7 @@ namespace Backoffice.Config.Database
                 entity.Property(u => u.EndDate).IsRequired(false);
                 entity.Property(u => u.RealDuration).IsRequired(false);
                 entity.Property(u => u.EstimatedDuration).IsRequired(false);
+                entity.Property(t => t.Status);
 
                 entity.HasOne(u => u.User)
                     .WithMany(r => r.Tasks)
@@ -50,6 +52,12 @@ namespace Backoffice.Config.Database
                 entity.HasOne(u => u.Project)
                     .WithMany(p => p.Tasks)
                     .HasForeignKey(u => u.ProjectId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
+
+                entity.HasOne(t => t.ParentTask)
+                    .WithMany(t => t.SubTasks)
+                    .HasForeignKey(t => t.ParentTaskId)
                     .OnDelete(DeleteBehavior.Restrict)
                     .IsRequired(false);
             });
@@ -80,36 +88,6 @@ namespace Backoffice.Config.Database
             {
                 entity.Property(u => u.Label).IsRequired();
             });
-
-           // Seed Roles
-            modelBuilder.Entity<Role>().HasData(
-               new Role { Id = 1, Label = "Administrator" },
-               new Role { Id = 2, Label = "Developer" },
-               new Role { Id = 3, Label = "Project Manager" }
-            );
-
-            // Seed Admin User
-            modelBuilder.Entity<User>().HasData(
-               new User
-               {
-                   Id = 1,
-                   Name = "Admin",
-                   Email = "admin@example.com",
-                   Password = "Admin123!", // À remplacer par un mot de passe hashé en production
-                   RoleId = 1
-               }
-            );
-
-            // Seed Sample Project
-            modelBuilder.Entity<Project>().HasData(
-               new Project
-               {
-                   Id = 1,
-                   Title = "Sample Project",
-                   Description = "This is a sample project",
-                   CreatedAt = DateTime.UtcNow
-               }
-            );
         }
 
         protected void BeforeSaveChanges()

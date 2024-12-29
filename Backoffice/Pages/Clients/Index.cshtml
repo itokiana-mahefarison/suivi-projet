@@ -1,0 +1,111 @@
+@page
+@model Backoffice.Pages.Clients.IndexModel
+@{
+    ViewData["Title"] = "Clients";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Clients</h1>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newClientModal">
+            <i class="fas fa-plus me-2"></i>New Client
+        </button>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <!-- Search Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control border-start-0" placeholder="Search client...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>NAME</th>
+                            <th>ADDRESS</th>
+                            <th>CITY</th>
+                            <th>COUNTRY</th>
+                            <th>PHONE</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var client in Model.Clients)
+                        {
+                            <tr>
+                                <td>@client.Name</td>
+                                <td>@client.Address</td>
+                                <td>@client.City</td>
+                                <td>@client.Country</td>
+                                <td>@client.Phone</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nouveau Client -->
+<div class="modal fade" id="newClientModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label asp-for="NewClient.Name" class="form-label">Name <span class="text-danger">*</span></label>
+                        <input asp-for="NewClient.Name" class="form-control" required>
+                        <span asp-validation-for="NewClient.Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NewClient.Address" class="form-label">Address</label>
+                        <textarea asp-for="NewClient.Address" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NewClient.City" class="form-label">City</label>
+                        <input asp-for="NewClient.City" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NewClient.Country" class="form-label">Country</label>
+                        <input asp-for="NewClient.Country" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NewClient.Phone" class="form-label">Phone</label>
+                        <input asp-for="NewClient.Phone" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backoffice.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241223204210_Initial")]
-    partial class Initial
+    [Migration("20241226124841_InitialModel")]
+    partial class InitialModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -126,7 +126,7 @@ namespace Backoffice.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("Shared.Models.Task", b =>
+            modelBuilder.Entity("Shared.Models.Tasks", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -205,6 +205,7 @@ namespace Backoffice.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
@@ -231,20 +232,23 @@ namespace Backoffice.Migrations
                 {
                     b.HasOne("Shared.Models.Client", "Client")
                         .WithMany("Projects")
-                        .HasForeignKey("ClientId");
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("Shared.Models.Task", b =>
+            modelBuilder.Entity("Shared.Models.Tasks", b =>
                 {
                     b.HasOne("Shared.Models.Project", "Project")
                         .WithMany("Tasks")
-                        .HasForeignKey("ProjectId");
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Shared.Models.User", "User")
                         .WithMany("Tasks")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Project");
 
@@ -255,7 +259,8 @@ namespace Backoffice.Migrations
                 {
                     b.HasOne("Shared.Models.Role", "Role")
                         .WithMany("Users")
-                        .HasForeignKey("RoleId");
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Role");
                 });

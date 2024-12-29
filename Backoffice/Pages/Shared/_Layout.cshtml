@@ -27,6 +27,11 @@
                             <i class="fas fa-home"></i> <span>Dashboard</span>
                         </a>
                     </li>
+                    <li class="@(ViewContext.RouteData.Values["Page"]?.ToString() == "/Clients/Index" ? "active" : "")">
+                        <a asp-page="/Clients/Index">
+                            <i class="fas fa-address-book"></i> <span>Clients</span>
+                        </a>
+                    </li>
                     <li class="@(ViewContext.RouteData.Values["Page"]?.ToString() == "/Projects/Index" ? "active" : "")">
                         <a asp-page="/Projects/Index">
                             <i class="fas fa-project-diagram"></i> <span>Projects</span>
@@ -35,6 +40,11 @@
                     <li class="@(ViewContext.RouteData.Values["Page"]?.ToString() == "/Users/Index" ? "active" : "")">
                         <a asp-page="/Users/Index">
                             <i class="fas fa-users"></i> <span>Users</span>
+                        </a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["Page"]?.ToString() == "/TasksManager/Index" ? "active" : "")">
+                        <a asp-page="/TasksManager/Index">
+                            <i class="fas fa-tasks me-2"></i> <span>Tasks</span>
                         </a>
                     </li>
                     <li class="@(ViewContext.RouteData.Values["Page"]?.ToString() == "/Privacy" ? "active" : "")">
