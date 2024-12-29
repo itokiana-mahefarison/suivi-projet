@@ -1,0 +1,106 @@
+@page
+@model Backoffice.Pages.Profile.IndexModel
+
+<div class="container py-4">
+    <h2 class="mb-4">My Profile</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="CurrentUser.Id" />
+                        
+                        <div class="mb-3">
+                            <label asp-for="CurrentUser.Name" class="form-label">Name</label>
+                            <input asp-for="CurrentUser.Name" class="form-control" />
+                            <span asp-validation-for="CurrentUser.Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CurrentUser.Email" class="form-label">Email</label>
+                            <input asp-for="CurrentUser.Email" class="form-control" />
+                            <span asp-validation-for="CurrentUser.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CurrentUser.Phone" class="form-label">Phone</label>
+                            <input asp-for="CurrentUser.Phone" class="form-control" />
+                            <span asp-validation-for="CurrentUser.Phone" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CurrentUser.Address" class="form-label">Address</label>
+                            <input asp-for="CurrentUser.Address" class="form-control" />
+                            <span asp-validation-for="CurrentUser.Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="CurrentUser.City" class="form-label">City</label>
+                                <input asp-for="CurrentUser.City" class="form-control" />
+                                <span asp-validation-for="CurrentUser.City" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CurrentUser.Country" class="form-label">Country</label>
+                                <input asp-for="CurrentUser.Country" class="form-control" />
+                                <span asp-validation-for="CurrentUser.Country" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <input value="@Model.CurrentUser.Role?.Label" class="form-control" readonly />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                            Change Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Change Password -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Change Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" asp-page-handler="ChangePassword">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Change Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 
