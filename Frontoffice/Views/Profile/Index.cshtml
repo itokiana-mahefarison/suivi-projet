@@ -1,0 +1,126 @@
+@model Shared.Models.User
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Profile Settings</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="general-tab" data-bs-toggle="tab" href="#general" role="tab">
+                                General Information
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="security-tab" data-bs-toggle="tab" href="#security" role="tab">
+                                Security
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mt-4" id="profileTabsContent">
+                        <!-- General Information Tab -->
+                        <div class="tab-pane fade show active" id="general" role="tabpanel">
+                            <form asp-action="Update" method="post">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label asp-for="Name" class="form-label">Full Name</label>
+                                        <input asp-for="Name" class="form-control" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="Email" class="form-label">Email</label>
+                                        <input asp-for="Email" class="form-control" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label asp-for="Phone" class="form-label">Phone</label>
+                                        <input asp-for="Phone" class="form-control" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="Country" class="form-label">Country</label>
+                                        <input asp-for="Country" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label asp-for="City" class="form-label">City</label>
+                                        <input asp-for="City" class="form-control" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="Address" class="form-label">Address</label>
+                                        <input asp-for="Address" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Save Changes
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Security Tab -->
+                        <div class="tab-pane fade" id="security" role="tabpanel">
+                            <form asp-action="UpdatePassword" method="post">
+                                <div class="mb-3">
+                                    <label for="currentPassword" class="form-label">Current Password</label>
+                                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" required />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="newPassword" class="form-label">New Password</label>
+                                    <input type="password" class="form-control" id="newPassword" name="newPassword" required />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                    <input type="password" class="form-control" id="confirmPassword" required />
+                                </div>
+
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-key me-2"></i>Update Password
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Validation du mot de passe
+        document.querySelector('form[asp-action="UpdatePassword"]').addEventListener('submit', function(e) {
+            var newPassword = document.getElementById('newPassword').value;
+            var confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                e.preventDefault();
+                alert('New passwords do not match');
+            }
+        });
+    </script>
+}

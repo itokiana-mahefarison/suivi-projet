@@ -1,8 +1,138 @@
-﻿@{
+﻿@model IEnumerable<Shared.Models.Tasks>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>My Tasks</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">To Do</h5>
+                </div>
+                <div class="card-body">
+                    <div class="kanban-column" data-status="todo">
+                        @foreach (var task in Model.Where(t => t.Status == "todo"))
+                        {
+                            <div class="card mb-2 task-card" data-task-id="@task.Id" data-task-title="@task.Title">
+                                <div class="card-body">
+                                    <h6 class="card-title">@task.Title</h6>
+                                    <p class="card-text small">@task.Description</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-dark">@task.Project?.Title</span>
+                                        <small>@task.EndDate?.ToString("MM/dd/yyyy")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">In Progress</h5>
+                </div>
+                <div class="card-body">
+                    <div class="kanban-column" data-status="in-progress">
+                        @foreach (var task in Model.Where(t => t.Status == "in-progress"))
+                        {
+                            <div class="card mb-2 task-card" data-task-id="@task.Id" data-task-title="@task.Title">
+                                <div class="card-body">
+                                    <h6 class="card-title">@task.Title</h6>
+                                    <p class="card-text small">@task.Description</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-dark">@task.Project?.Title</span>
+                                        <small>@task.EndDate?.ToString("MM/dd/yyyy")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Done</h5>
+                </div>
+                <div class="card-body">
+                    <div class="kanban-column" data-status="done">
+                        @foreach (var task in Model.Where(t => t.Status == "done"))
+                        {
+                            <div class="card mb-2 task-card" data-task-id="@task.Id" data-task-title="@task.Title">
+                                <div class="card-body">
+                                    <h6 class="card-title">@task.Title</h6>
+                                    <p class="card-text small">@task.Description</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-dark">@task.Project?.Title</span>
+                                        <small>@task.EndDate?.ToString("MM/dd/yyyy")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script>
+        // Initialize Sortable for Kanban
+        document.querySelectorAll('.kanban-column').forEach(column => {
+            new Sortable(column, {
+                group: 'tasks',
+                animation: 150,
+                onEnd: function(evt) {
+                    const taskId = evt.item.dataset.taskId;
+                    const taskTitle = evt.item.dataset.taskTitle;
+                    const newStatus = evt.to.dataset.status;
+                    updateTask({
+                        id: taskId,
+                        status: newStatus,
+                        title: taskTitle
+                    });
+                }
+            });
+        });
+
+        // Update task status
+        async function updateTask(task) {
+            try {
+                const response = await fetch('/Home/UpdateTaskStatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify(task)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error:', errorText);
+                    alert('Failed to update task status: ' + errorText);
+                    return;
+                }
+
+                window.location.reload();
+                
+            } catch (error) {
+                console.error('Network error:', error);
+                alert('Connection error: ' + error.message);
+            }
+        }
+    </script>
+}
