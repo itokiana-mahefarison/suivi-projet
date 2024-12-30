@@ -27,5 +27,6 @@ namespace Shared.Models
         public int? ParentTaskId { get; set; }
         public Tasks? ParentTask { get; set; }
         public ICollection<Tasks>? SubTasks { get; set;}
+        public ICollection<TaskLink> TaskLinks { get; set; }
     }
 }

@@ -56,18 +56,23 @@ namespace Backoffice.Pages.Projects
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 HeaderValidated = null,
-                MissingFieldFound = null
+                MissingFieldFound = null,
+                ShouldSkipRecord = args => args.Row.Parser.Record.All(string.IsNullOrEmpty)
             };
 
             using var csv = new CsvReader(reader, config);
-            var tasks = csv.GetRecords<Tasks>().ToList();
-
-            foreach (var task in tasks)
+            var tasks = csv.GetRecords<TaskImportDto>().ToList();
+            
+            var taskEntities = tasks.Select(t => new Tasks
             {
-                task.ProjectId = projectId;
-            }
+                ProjectId = projectId,
+                Title = t.Title,
+                Description = t.Description,
+                EstimatedDuration = t.EstimatedDuration,
+                Status = t.Status
+            }).ToList();
 
-            await _context.Tasks.AddRangeAsync(tasks);
+            await _context.Tasks.AddRangeAsync(taskEntities);
             await _context.SaveChangesAsync();
 
             return RedirectToPage(new { id = projectId });
@@ -116,16 +121,16 @@ namespace Backoffice.Pages.Projects
                 table.AddHeaderCell("Duration (h)");
                 table.AddHeaderCell("Cost");
 
-                var hourlyRate = 100; // Define your hourly rate
                 var totalCost = 0.0;
 
                 foreach (var task in project.Tasks)
                 {
+                    var user  = task.User;
                     table.AddCell(task.Title);
                     table.AddCell(task.Description ?? "");
                     table.AddCell(task.EstimatedDuration?.ToString() ?? "0");
                     
-                    var cost = (task.EstimatedDuration ?? 0) * hourlyRate;
+                    var cost = (task.EstimatedDuration ?? 0) * user.HourlyRate ?? 0;
                     totalCost += cost;
                     table.AddCell($"${cost:F2}");
                 }
@@ -148,5 +153,13 @@ namespace Backoffice.Pages.Projects
 
             return File(memory, "application/pdf", fileName);
         }
+    }
+
+    public class TaskImportDto
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public double? EstimatedDuration { get; set; }
+        public string Status { get; set; }
     }
 } 

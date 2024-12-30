@@ -4,6 +4,7 @@ using Backoffice.Config.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backoffice.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241230103443_HourlyRateUser")]
+    partial class HourlyRateUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,33 +127,6 @@ namespace Backoffice.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("Shared.Models.TaskLink", b =>
-                {
-                    b.Property<int>("TaskFromId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TaskToId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("TaskFromId", "TaskToId");
-
-                    b.HasIndex("TaskToId");
-
-                    b.ToTable("TaskLinks");
                 });
 
             modelBuilder.Entity("Shared.Models.Tasks", b =>
@@ -277,25 +253,6 @@ namespace Backoffice.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("Shared.Models.TaskLink", b =>
-                {
-                    b.HasOne("Shared.Models.Tasks", "TaskFrom")
-                        .WithMany("TaskLinks")
-                        .HasForeignKey("TaskFromId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Shared.Models.Tasks", "TaskTo")
-                        .WithMany()
-                        .HasForeignKey("TaskToId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("TaskFrom");
-
-                    b.Navigation("TaskTo");
-                });
-
             modelBuilder.Entity("Shared.Models.Tasks", b =>
                 {
                     b.HasOne("Shared.Models.Tasks", "ParentTask")
@@ -348,8 +305,6 @@ namespace Backoffice.Migrations
             modelBuilder.Entity("Shared.Models.Tasks", b =>
                 {
                     b.Navigation("SubTasks");
-
-                    b.Navigation("TaskLinks");
                 });
 
             modelBuilder.Entity("Shared.Models.User", b =>

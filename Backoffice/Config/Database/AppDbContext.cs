@@ -13,6 +13,7 @@ namespace Backoffice.Config.Database
         public DbSet<Project> Projects { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<TaskLink> TaskLinks { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -25,6 +26,7 @@ namespace Backoffice.Config.Database
                 entity.Property(u => u.Name).IsRequired();
                 entity.Property(u => u.Email).IsRequired();
                 entity.Property(u => u.Password).IsRequired();
+                entity.Property(u => u.HourlyRate).IsRequired(false);
                 entity
                     .HasOne(u => u.Role)
                     .WithMany(r => r.Users)
@@ -88,6 +90,20 @@ namespace Backoffice.Config.Database
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.Property(u => u.Label).IsRequired();
+            });
+
+            modelBuilder.Entity<TaskLink>(entity =>
+            {
+                entity.HasKey(tr => new {tr.TaskFromId, tr.TaskToId});
+                entity.HasOne(tr => tr.TaskFrom)
+                    .WithMany(t => t.TaskLinks)
+                    .HasForeignKey(tr => tr.TaskFromId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(tr => tr.TaskTo)
+                    .WithMany()
+                    .HasForeignKey(tr => tr.TaskToId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
 
