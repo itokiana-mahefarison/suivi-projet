@@ -176,6 +176,26 @@
     <script src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script>
+        // Ajouter au début du script
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attendre que Bootstrap soit complètement chargé
+            const activeTab = localStorage.getItem('activeTab');
+            if (activeTab) {
+                const tab = document.querySelector(`a[href="${activeTab}"]`);
+                if (tab) {
+                    const bsTab = new bootstrap.Tab(tab);
+                    bsTab.show();
+                }
+            }
+        });
+
+        // Sauvegarder l'onglet actif lors du changement
+        document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(tab => {
+            tab.addEventListener('shown.bs.tab', function(e) {
+                localStorage.setItem('activeTab', e.target.getAttribute('href'));
+            });
+        });
+
         gantt.plugins({
             auto_scheduling: true
         });
@@ -497,7 +517,13 @@
                     return;
                 }
 
-                // Rafraîchir la page après une mise à jour réussie
+                // Sauvegarder l'onglet actif avant le rechargement
+                const activeTab = document.querySelector('.nav-link.active');
+                if (activeTab) {
+                    localStorage.setItem('activeTab', activeTab.getAttribute('href'));
+                }
+
+                // Rafraîchir la page
                 window.location.reload();
                 
             } catch (error) {
