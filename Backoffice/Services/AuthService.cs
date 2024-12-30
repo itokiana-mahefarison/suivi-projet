@@ -45,11 +45,11 @@ namespace Backoffice.Services
 
         public async Task<User?> GetCurrentUserAsync(ClaimsPrincipal userClaims)
         {
-            var email = userClaims.FindFirstValue(ClaimTypes.Email);
-            if (string.IsNullOrEmpty(email))
+            var id = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(id))
                 return null;
 
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == Int32.Parse(id));
         }
 
         public async Task SignInAsync(User user, HttpContext httpContext)
@@ -58,7 +58,8 @@ namespace Backoffice.Services
             {
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, user.Name ?? string.Empty),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role?.Label ?? string.Empty)
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

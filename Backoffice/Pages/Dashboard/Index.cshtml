@@ -53,57 +53,42 @@
         <div class="dashboard-card">
             <h2>Recent Projects</h2>
             <div class="projects-list">
-                <div class="project-item">
-                    <div class="project-info">
-                        <h4>Website Redesign</h4>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 75%"></div>
+                @foreach (var project in Model.RecentProjects)
+                {
+                    <div class="project-item">
+                        <div class="project-info">
+                            <h4>@project.Title</h4>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: @(project.Progress)%"></div>
+                            </div>
                         </div>
+                        <span class="status @(project.Progress == 100 ? "completed" : "active")">
+                            @(project.Progress == 100 ? "completed" : "active")
+                        </span>
                     </div>
-                    <span class="status active">active</span>
-                </div>
-
-                <div class="project-item">
-                    <div class="project-info">
-                        <h4>Mobile App</h4>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 25%"></div>
-                        </div>
-                    </div>
-                    <span class="status active">active</span>
-                </div>
-
-                <div class="project-item">
-                    <div class="project-info">
-                        <h4>Cloud Migration</h4>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 100%"></div>
-                        </div>
-                    </div>
-                    <span class="status completed">completed</span>
-                </div>
+                }
             </div>
         </div>
 
-        <!-- Project Statistics au lieu de Recent Activity -->
+        <!-- Project Statistics -->
         <div class="dashboard-card">
             <h2>Project Statistics</h2>
             <div class="stats-list">
                 <div class="stat-item">
                     <div class="stat-label">Completed Projects</div>
-                    <div class="stat-value">8</div>
+                    <div class="stat-value">@Model.Statistics.CompletedProjects</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">In Progress</div>
-                    <div class="stat-value">4</div>
+                    <div class="stat-value">@Model.Statistics.InProgressProjects</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Team Members</div>
-                    <div class="stat-value">12</div>
+                    <div class="stat-value">@Model.Statistics.TeamMembers</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Average Project Duration</div>
-                    <div class="stat-value">45 days</div>
+                    <div class="stat-value">@Model.Statistics.AverageProjectDuration days</div>
                 </div>
             </div>
         </div>

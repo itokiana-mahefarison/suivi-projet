@@ -1,0 +1,7 @@
+Title,Description,StartDate,EndDate,RealDuration,EstimatedDuration,Status,UserId,ProjectId,ParentTaskId
+"Analyse des besoins","Réunion avec le client pour définir les besoins",2024-01-15,2024-01-16,8,8,"done",1,1,
+"Design UI/UX","Création des maquettes",2024-01-17,2024-01-19,,16,"todo",2,1,
+"Développement Frontend","Implémentation des interfaces",2024-01-20,2024-01-25,,40,"todo",3,1,1
+"Développement Backend","Création de l'API",2024-01-20,2024-01-25,,32,"todo",3,1,1
+"Tests unitaires","Tests des fonctionnalités",2024-01-26,2024-01-27,,8,"todo",4,1,3
+"Déploiement","Mise en production",2024-01-28,2024-01-28,,4,"todo",3,1, 

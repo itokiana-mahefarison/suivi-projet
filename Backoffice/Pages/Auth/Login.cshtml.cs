@@ -37,6 +37,7 @@ namespace Backoffice.Pages.Auth
             }
 
             var user = await _context.Users
+                .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Email == Email);
 
             var validatedCredetials = await _authService.ValidateLoginAsync(Email, Password);

@@ -67,6 +67,7 @@ namespace Backoffice.Config.Database
                 entity.Property(u => u.Title).IsRequired();
                 entity.Property(u => u.Description).IsRequired(false);
                 entity.Property(u => u.Budget).IsRequired(false);
+                entity.Property(u => u.Progress).IsRequired(false);
 
                 entity.HasOne(u => u.Client)
                     .WithMany(r => r.Projects)

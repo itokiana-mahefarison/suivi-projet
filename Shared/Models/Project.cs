@@ -14,6 +14,7 @@ namespace Shared.Models
         public Client? Client { get; set; }
         public int? ClientId { get; set; }
         public ICollection<Tasks>? Tasks { get; set; }
+        public Double? Progress { get; set; }
 
     }
 }

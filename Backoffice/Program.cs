@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Backoffice.Services;
 using Backoffice.Services.Interfaces;
+using Shared.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,11 +28,47 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
-// Apply migrations automatically
+// Apply migrations and seed data
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
+
+    // Check if Roles table is empty and seed initial roles
+    if (!db.Roles.Any())
+    {
+        db.Roles.AddRange(
+            new Shared.Models.Role
+            {
+                Label = "Administrator",
+                CreatedAt = DateTime.UtcNow
+            },
+            new Shared.Models.Role
+            {
+                Label = "Project Manager",
+                CreatedAt = DateTime.UtcNow
+            },
+            new Shared.Models.Role
+            {
+                Label = "Developer",
+                CreatedAt = DateTime.UtcNow
+            }
+        );
+        db.SaveChanges();
+    }
+
+    if (!db.Users.Any())
+    {
+        db.Users.Add(new User
+        {
+            Name = "Admin",
+            Email = "admin@admin.com",
+            Password = BCrypt.Net.BCrypt.HashPassword("admin"),
+            RoleId = 1
+        });
+
+        db.SaveChanges();
+    }
 }
 
 // Configure the HTTP request pipeline.
