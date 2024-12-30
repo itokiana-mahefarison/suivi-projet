@@ -26,6 +26,7 @@ namespace Backoffice.Pages.TasksManager
         public List<SelectListItem> Statuses { get; set; }
         public List<SelectListItem> Users { get; set; }
         public List<SelectListItem> Projects { get; set; }
+        public List<TaskLink> TaskLinks { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -35,6 +36,7 @@ namespace Backoffice.Pages.TasksManager
                 .Include(t => t.ParentTask)
                 .ToListAsync();
             
+            TaskLinks = await _context.TaskLinks.ToListAsync();
             await LoadSelectLists();
         }
 
@@ -80,12 +82,27 @@ namespace Backoffice.Pages.TasksManager
             var task = await _context.Tasks.FindAsync(model.Id);
             if (task == null) return NotFound();
 
-            task.Title = model.Title;
-            task.Description = model.Description;
-            task.UserId = model.AssignedToId;
-            task.StartDate = model.StartDate;
-            task.EndDate = model.EndDate;
-            task.Status = model.Status;
+            if (model.Title != null)
+                task.Title = model.Title;
+            
+            // Pour AssignedToId, on permet explicitement la valeur null pour désassigner un utilisateur
+            if(model.AssignedToId != null)
+                task.UserId = model.AssignedToId != 0 ? model.AssignedToId : null;
+
+            if(model.Duration.HasValue)
+                task.EstimatedDuration = model.Duration.Value;
+            
+            if (model.StartDate.HasValue)
+                task.StartDate = model.StartDate;
+            
+            if (model.EndDate.HasValue)
+                task.EndDate = model.EndDate;
+            
+            if (model.Status != null)
+                task.Status = model.Status;
+            
+            if (model.Description != null)
+                task.Description = model.Description;
 
             await _context.SaveChangesAsync();
             return new JsonResult(new { success = true });
@@ -101,6 +118,7 @@ namespace Backoffice.Pages.TasksManager
             };
 
             Users = await _context.Users
+                .Where(u => u.DeletedAt == null)
                 .Select(u => new SelectListItem 
                 { 
                     Value = u.Id.ToString(), 
@@ -143,5 +161,6 @@ namespace Backoffice.Pages.TasksManager
         public int? AssignedToId { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
+        public Double? Duration { get; set; }
     }
 }

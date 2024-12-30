@@ -12,6 +12,7 @@ namespace Shared.Models
         public Tasks TaskFrom {  get; set; }
         public int TaskToId { get; set;}
         public Tasks TaskTo { get; set; }
+        public int LinkType { get; set;}
 
     }
 }

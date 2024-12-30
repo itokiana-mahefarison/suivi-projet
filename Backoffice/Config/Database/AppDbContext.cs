@@ -95,6 +95,7 @@ namespace Backoffice.Config.Database
             modelBuilder.Entity<TaskLink>(entity =>
             {
                 entity.HasKey(tr => new {tr.TaskFromId, tr.TaskToId});
+                entity.Property(t => t.LinkType).IsRequired();
                 entity.HasOne(tr => tr.TaskFrom)
                     .WithMany(t => t.TaskLinks)
                     .HasForeignKey(tr => tr.TaskFromId)
