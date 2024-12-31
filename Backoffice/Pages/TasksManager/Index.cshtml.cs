@@ -33,6 +33,7 @@ namespace Backoffice.Pages.TasksManager
             // Charger les tâches depuis la BDD
             Tasks = await _context.Tasks
                 .Include(t => t.User)
+                .Include(t => t.Project)
                 .Include(t => t.ParentTask)
                 .ToListAsync();
             
