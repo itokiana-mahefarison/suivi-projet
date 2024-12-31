@@ -59,7 +59,7 @@
                         <div class="project-info">
                             <h4>@project.Title</h4>
                             <div class="progress">
-                                <div class="progress-bar" style="width: @(project.Progress)%"></div>
+                                <div class="progress-bar" style="width: @((int)project.Progress)%"></div>
                             </div>
                         </div>
                         <span class="status @(project.Progress == 100 ? "completed" : "active")">
