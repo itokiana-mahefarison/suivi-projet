@@ -454,6 +454,13 @@
 
         async function createTaskAsync(id, task) {
             try {
+                // Ajuster les dates pour le fuseau horaire
+                const startDate = new Date(task.start_date);
+                const endDate = new Date(task.end_date);
+                
+                // Ajouter 3 heures pour compenser le décalage
+                startDate.setHours(startDate.getHours() + 3);
+                endDate.setHours(endDate.getHours() + 3);
 
                 const response = await fetch('?handler=CreateTask', {
                     method: 'POST',
@@ -463,12 +470,12 @@
                     },
                     body: JSON.stringify({
                         title: task.text,
-                        startDate: task.start_date,
-                        endDate: task.end_date,
+                        startDate: startDate.toISOString(),
+                        endDate: endDate.toISOString(),
                         assignedToId: task.user || null,
                         duration: task.duration,
                         parentTaskId: parseInt(task.parent),
-                        status: 'todo' // Statut par défaut pour les nouvelles tâches
+                        status: 'todo'
                     })
                 });
 
@@ -489,18 +496,27 @@
             createTaskAsync(id, task);
         });
 
-        async function updateTaskAsync(id, task){
-            try{
+        async function updateTaskAsync(id, task) {
+            try {
+                // Ajuster les dates pour le fuseau horaire
+                const startDate = new Date(task.start_date);
+                const endDate = new Date(task.end_date);
+                
+                // Ajouter 3 heures pour compenser le décalage
+                startDate.setHours(startDate.getHours() + 3);
+                endDate.setHours(endDate.getHours() + 3);
+
                 await updateTask({
                     id: id,
                     title: task.text,
-                    startDate: task.start_date,
-                    endDate: task.end_date,
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString(),
                     assignedToId: task.user,
                     duration: task.duration
                 }, 'UpdateTask');
+                
                 gantt.message({type: "success", text: "Task updated"});
-            }catch(error){
+            } catch(error) {
                 console.error('Error:', error);
                 gantt.message({type: "error", text: "Failed to update task: " + error.message});
             }
