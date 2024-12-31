@@ -43,6 +43,7 @@
                             <th class="align-middle">USER</th>
                             <th class="align-middle">EMAIL</th>
                             <th class="align-middle">ROLE</th>
+                            <th class="align-middle">HOURLY RATE</th>
                             <th class="align-middle">STATUS</th>
                             <th class="align-middle">ACTIONS</th>
                         </tr>
@@ -62,6 +63,7 @@
                                 </td>
                                 <td class="align-middle">@user.Email</td>
                                 <td class="align-middle"><span class="badge bg-dark">@user.Role.Label</span></td>
+                                <td class="align-middle">@(user.HourlyRate?.ToString("C2") ?? "-")</td>
                                 <td class="align-middle"><span class="badge bg-success">Active</span></td>
                                 <td class="align-middle">
                                     <button class="btn btn-sm btn-outline-primary me-2" 
@@ -146,6 +148,14 @@
                             </select>
                             <span asp-validation-for="NewUser.Role" class="text-danger"></span>
                         </div>
+                        <div class="col-md-6">
+                            <label asp-for="NewUser.HourlyRate" class="form-label">Hourly Rate</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="NewUser.HourlyRate" class="form-control" type="number" step="0.01" min="0">
+                            </div>
+                            <span asp-validation-for="NewUser.HourlyRate" class="text-danger"></span>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -191,6 +201,20 @@
                                         asp-items="Model.Roles" required>
                                     <option value="">Select a role</option>
                                 </select>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var select = document.querySelector('#editUserModal@(user.Id) select[name="updatedUser.Role"]');
+                                        select.value = '@user.RoleId';
+                                    });
+                                </script>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Hourly Rate</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input name="updatedUser.HourlyRate" class="form-control" 
+                                           type="number" step="0.01" min="0" value="@user.HourlyRate">
+                                </div>
                             </div>
                         </div>
                     </div>

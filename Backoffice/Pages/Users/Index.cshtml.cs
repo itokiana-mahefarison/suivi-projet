@@ -99,10 +99,6 @@ namespace Backoffice.Pages.Users
 
         public async Task<IActionResult> OnPostUpdateAsync(int id, UserInputModel updatedUser)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             var user = await _context.Users.FindAsync(id);
             if (user == null)
@@ -114,6 +110,7 @@ namespace Backoffice.Pages.Users
             user.Email = updatedUser.Email;
             user.Phone = updatedUser.Phone;
             user.RoleId = Int32.Parse(updatedUser.Role);
+            user.HourlyRate = updatedUser.HourlyRate;
 
             await _context.SaveChangesAsync();
             return RedirectToPage();
@@ -133,5 +130,9 @@ namespace Backoffice.Pages.Users
         public string Role { get; set; }
 
         public string Phone { get; set; }
+
+        [Display(Name = "Hourly Rate")]
+        [Range(0, double.MaxValue, ErrorMessage = "Hourly rate must be a positive number")]
+        public double? HourlyRate { get; set; }
     }
 } 

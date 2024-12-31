@@ -83,6 +83,7 @@ namespace Backoffice.Pages.Projects
             var project = await _context.Projects
                 .Include(p => p.Client)
                 .Include(p => p.Tasks)
+                    .ThenInclude(t => t.User)
                 .FirstOrDefaultAsync(p => p.Id == projectId);
 
             if (project == null)
@@ -125,12 +126,16 @@ namespace Backoffice.Pages.Projects
 
                 foreach (var task in project.Tasks)
                 {
-                    var user  = task.User;
                     table.AddCell(task.Title);
                     table.AddCell(task.Description ?? "");
-                    table.AddCell(task.EstimatedDuration?.ToString() ?? "0");
+                    table.AddCell((task.EstimatedDuration * 8)?.ToString() ?? "0");
                     
-                    var cost = (task.EstimatedDuration ?? 0) * user.HourlyRate ?? 0;
+                    // Calcul du coût en fonction de l'utilisateur assigné
+                    var cost = 0.0;
+                    if (task.User != null && task.EstimatedDuration.HasValue)
+                    {
+                        cost = task.EstimatedDuration.Value * (task.User.HourlyRate ?? 0);
+                    }
                     totalCost += cost;
                     table.AddCell($"${cost:F2}");
                 }
