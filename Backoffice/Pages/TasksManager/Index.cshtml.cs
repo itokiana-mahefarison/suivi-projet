@@ -107,6 +107,44 @@ namespace Backoffice.Pages.TasksManager
             await _context.SaveChangesAsync();
             return new JsonResult(new { success = true });
         }
+        
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> OnPostCreateTaskAsync([FromBody] TaskUpdateModel model)
+        {
+            if (model == null) return BadRequest();
+
+            // Initialiser le ProjectId
+            int projectId = 0;
+
+            // Si on a un ParentTaskId, récupérer le ProjectId de la tâche parente
+            if (model.ParentTaskId.HasValue)
+            {
+                var parentTask = await _context.Tasks
+                    .FirstOrDefaultAsync(t => t.Id == model.ParentTaskId);
+                
+                if (parentTask == null)
+                    return BadRequest("Parent task not found");
+                    
+                projectId = parentTask.ProjectId;
+            }
+
+            var task = new Tasks
+            {
+                Title = model.Title,
+                StartDate = model.StartDate,
+                EndDate = model.EndDate,
+                Status = model.Status,
+                UserId = model.AssignedToId == 0 ? null : model.AssignedToId,
+                EstimatedDuration = model.Duration ?? 0,
+                ParentTaskId = model.ParentTaskId,
+                ProjectId = projectId
+            };
+
+            _context.Tasks.Add(task);
+            await _context.SaveChangesAsync();
+
+            return new JsonResult(new { success = true, taskId = task.Id });
+        }
 
         private async Task LoadSelectLists()
         {
@@ -162,5 +200,6 @@ namespace Backoffice.Pages.TasksManager
         public string? Title { get; set; }
         public string? Description { get; set; }
         public Double? Duration { get; set; }
+        public int? ParentTaskId { get; set; }
     }
 }

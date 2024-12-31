@@ -442,7 +442,7 @@
                 duration = t.EstimatedDuration,
                 user = t.User?.Id,
                 end_date = t.EndDate?.ToString("dd-MM-yyyy"),
-                progress = t.Status == "done" ? 1 : t.Status == "in-progress" ? 0.5 : 0
+                progress = t.Status == "done" ? 1 : t.Status == "in-progress" ? 0.5 : 0,
             })),
             links: @Json.Serialize(Model.TaskLinks.Select(l => new {
                 id = l.Id,
@@ -452,10 +452,41 @@
             }))
         });
 
-        gantt.attachEvent("onAfterTaskAdd", function(id, task){
-        // Envoyer une requête AJAX pour créer la tâche dans la base de données
-            alert("Task added");
-            console.log(task, id);
+        async function createTaskAsync(id, task) {
+            try {
+
+                const response = await fetch('?handler=CreateTask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({
+                        title: task.text,
+                        startDate: task.start_date,
+                        endDate: task.end_date,
+                        assignedToId: task.user || null,
+                        duration: task.duration,
+                        parentTaskId: parseInt(task.parent),
+                        status: 'todo' // Statut par défaut pour les nouvelles tâches
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                gantt.message({type: "success", text: "Task created successfully"});
+            } catch (error) {
+                console.error('Error:', error);
+                gantt.message({type: "error", text: "Failed to create task: " + error.message});
+                // Annuler l'ajout de la tâche dans le Gantt si l'enregistrement échoue
+                gantt.deleteTask(id);
+            }
+        }
+
+        gantt.attachEvent("onAfterTaskAdd", function(id, task) {
+            createTaskAsync(id, task);
         });
 
         async function updateTaskAsync(id, task){
